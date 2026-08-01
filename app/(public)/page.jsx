@@ -3,6 +3,9 @@ import { getFeaturedProperties, getUserFavorites } from '@/lib/data';
 import { auth } from '@/lib/auth';
 import PropertyCard from '@/components/PropertyCard';
 import { ScrollReveal, AnimatedCounter } from '@/components/MotionWrapper';
+import TextEffect from '@/components/TextEffect';
+import MarqueeStrip from '@/components/MarqueeStrip';
+import SpotlightEffect from '@/components/SpotlightEffect';
 import { Search, MapPin, Home as HomeIcon, Building, ArrowRight } from 'lucide-react';
 
 export const revalidate = 60;
@@ -24,9 +27,12 @@ export default async function HomePage() {
   ];
 
   return (
-    <div className="space-y-20 pb-20">
-      {/* 1. Editorial Hero Section */}
-      <section className="relative pt-12 pb-20 bg-bg">
+    <div className="space-y-20 pb-20 relative">
+      {/* 3. Spotlight Effect (Desktop Only) */}
+      <SpotlightEffect />
+
+      {/* 1. Hero Section with Word-by-Word Text Reveal */}
+      <section className="relative pt-12 pb-16 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
@@ -36,10 +42,11 @@ export default async function HomePage() {
                 Direct Owner Real Estate
               </span>
 
-              {/* Fraunces 64px display heading (weight 400 - serif display face regular) */}
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-5xl font-normal text-primary tracking-tight leading-[1.08]">
-                Properties of distinction, listed directly by owners.
-              </h1>
+              {/* Text Reveal Component (Aceternity / Motion Primitives Text Effect) */}
+              <TextEffect
+                text="Properties of distinction, listed directly by owners."
+                className="font-display text-4xl sm:text-5xl lg:text-5xl font-normal text-primary tracking-tight leading-[1.08]"
+              />
 
               <p className="text-secondary text-base sm:text-lg max-w-xl font-normal leading-relaxed">
                 Discover verified sky villas, luxury penthouses, duplex residences, and commercial assets across India’s primary growth corridors.
@@ -128,10 +135,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2. Platform Overview Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* 2. Marquee Strip Component (Magic UI Marquee Adaptation) */}
+      <MarqueeStrip />
+
+      {/* 5. Bento Grid Hover Reveal Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <ScrollReveal>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-surface p-8 sm:p-12 rounded-xl border border-border shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-surface p-8 sm:p-12 rounded-xl border border-border shadow-sm hover:shadow-hover hover:border-accent/40 transition-all duration-300">
             <div className="lg:col-span-6 space-y-4">
               <span className="text-xs font-semibold uppercase tracking-widest text-accent">Curated Inventory</span>
               <h2 className="font-display font-normal text-3xl sm:text-4xl text-primary leading-tight">
@@ -159,7 +169,7 @@ export default async function HomePage() {
         </ScrollReveal>
       </section>
 
-      {/* 3. Featured Properties Portfolio */}
+      {/* Featured Properties Portfolio */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
@@ -195,7 +205,7 @@ export default async function HomePage() {
         </ScrollReveal>
       </section>
 
-      {/* 4. Editorial Standards (Numbered List, No Repetitive Circles) */}
+      {/* Editorial Process Standards */}
       <section className="bg-sunken border-y border-border py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
@@ -233,7 +243,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. City Destinations */}
+      {/* City Destinations */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-8">
@@ -246,7 +256,7 @@ export default async function HomePage() {
               <Link
                 key={city.name}
                 href={`/listings?city=${city.name}`}
-                className="group relative rounded-lg overflow-hidden aspect-[16/10] bg-sunken border border-border hover:border-accent transition"
+                className="group relative rounded-lg overflow-hidden aspect-[16/10] bg-sunken border border-border hover:border-accent hover:shadow-hover transition duration-300"
               >
                 <img
                   src={city.image}
