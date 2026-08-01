@@ -61,7 +61,7 @@ export default function ContactModal({ property, isOpen, onClose }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="bg-surface rounded-xl max-w-lg w-full shadow-lg border border-border overflow-hidden relative"
+            className="bg-surface rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-lg border border-border relative"
           >
             {/* Header */}
             <div className="bg-bg border-b border-border p-6 relative">

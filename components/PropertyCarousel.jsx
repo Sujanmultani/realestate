@@ -74,7 +74,7 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
           {properties.map((prop) => (
             <div
               key={prop._id}
-              className="flex-[0_0_85%] sm:flex-[0_0_46%] lg:flex-[0_0_29%] pl-6 shrink-0"
+              className="flex-[0_0_84%] sm:flex-[0_0_46%] lg:flex-[0_0_29%] pl-6 shrink-0"
             >
               <PropertyCard
                 property={prop}
@@ -106,18 +106,22 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
         <ChevronRight className="w-5 h-5 text-primary" />
       </button>
 
-      {/* Pagination Dots */}
-      <div className="flex justify-center items-center gap-1.5 mt-6">
+      {/* Pagination Dots with 44x44px touch targets for mobile accessibility */}
+      <div className="flex justify-center items-center gap-1 mt-4 sm:mt-6">
         {scrollSnaps.map((_, i) => (
           <button
             type="button"
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === selectedIndex ? 'w-6 bg-accent' : 'w-1.5 bg-border-strong hover:bg-secondary'
-            }`}
+            className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
             aria-label={`Go to slide ${i + 1}`}
-          />
+          >
+            <span
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === selectedIndex ? 'w-6 bg-accent' : 'w-1.5 bg-border-strong hover:bg-secondary'
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>

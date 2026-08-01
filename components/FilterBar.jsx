@@ -2,8 +2,8 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { RotateCcw, ArrowUpDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RotateCcw, ArrowUpDown, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CITIES = ['All Cities', 'Mumbai', 'Bengaluru', 'Ahmedabad', 'Pune', 'Gurugram', 'Hyderabad', 'Delhi'];
 const PROPERTY_TYPES = [
@@ -27,6 +27,7 @@ export default function FilterBar() {
   const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [sort, setSort] = useState(searchParams.get('sort') || 'newest');
+  const [mobileExpanded, setMobileExpanded] = useState(false);
 
   useEffect(() => {
     setCity(searchParams.get('city') || 'all');
@@ -80,12 +81,20 @@ export default function FilterBar() {
     router.push('/listings');
   };
 
+  const activeFilterCount = [
+    city !== 'all',
+    propertyType !== 'all',
+    bedrooms !== 'all',
+    Boolean(minPrice),
+    Boolean(maxPrice),
+  ].filter(Boolean).length;
+
   return (
     <div className="bg-surface rounded-lg border border-border p-4 lg:p-6 mb-8 space-y-4 shadow-sm" suppressHydrationWarning>
       {/* Top Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-border" suppressHydrationWarning>
         {/* Type Toggle Pills */}
-        <div className="flex items-center gap-1 bg-sunken p-1 rounded-md border border-border w-full sm:w-auto" suppressHydrationWarning>
+        <div className="flex items-center gap-1 bg-sunken p-1 rounded-md border border-border w-full sm:w-auto overflow-x-auto" suppressHydrationWarning>
           {[
             { label: 'All Listings', value: 'all' },
             { label: 'For Sale', value: 'sale' },
@@ -101,7 +110,7 @@ export default function FilterBar() {
                   setListingType(type.value);
                   applyFilters({ listingType: type.value });
                 }}
-                className={`relative flex-1 sm:flex-none px-4 py-1.5 text-xs font-semibold rounded-sm transition ${
+                className={`relative flex-1 sm:flex-none px-3.5 sm:px-4 py-2 sm:py-1.5 text-xs font-semibold rounded-sm transition whitespace-nowrap min-h-[44px] sm:min-h-[auto] flex items-center justify-center ${
                   isActive ? 'text-white bg-accent' : 'text-secondary hover:text-primary'
                 }`}
               >
@@ -111,11 +120,22 @@ export default function FilterBar() {
           })}
         </div>
 
-        {/* Sort & Reset */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end" suppressHydrationWarning>
+        {/* Sort & Mobile Toggle */}
+        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto" suppressHydrationWarning>
+          {/* Mobile Filter Expand Button */}
+          <button
+            type="button"
+            onClick={() => setMobileExpanded(!mobileExpanded)}
+            className="sm:hidden flex items-center gap-2 px-3 py-2 bg-sunken border border-border rounded-md text-xs font-semibold text-primary min-h-[44px]"
+          >
+            <SlidersHorizontal className="w-4 h-4 text-accent" />
+            <span>Filters {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
+            {mobileExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
           <div className="flex items-center gap-2 text-xs font-medium text-secondary" suppressHydrationWarning>
-            <ArrowUpDown className="w-3.5 h-3.5 text-secondary" />
-            <span>Sort:</span>
+            <ArrowUpDown className="w-3.5 h-3.5 text-secondary shrink-0" />
+            <span className="hidden sm:inline">Sort:</span>
             <select
               value={sort}
               suppressHydrationWarning
@@ -123,7 +143,7 @@ export default function FilterBar() {
                 setSort(e.target.value);
                 applyFilters({ sort: e.target.value });
               }}
-              className="bg-sunken border border-border rounded-md px-3 py-1.5 text-primary text-xs font-semibold focus:outline-none focus:border-accent"
+              className="bg-sunken border border-border rounded-md px-3 py-2 sm:py-1.5 text-primary text-xs font-semibold focus:outline-none focus:border-accent min-h-[44px] sm:min-h-[auto]"
             >
               <option value="newest">Newest First</option>
               <option value="price_asc">Price: Low to High</option>
@@ -136,16 +156,16 @@ export default function FilterBar() {
             type="button"
             suppressHydrationWarning
             onClick={handleReset}
-            className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-semantic-error px-2.5 py-1.5 rounded-md hover:bg-sunken transition"
+            className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-semantic-error px-2.5 py-2 sm:py-1.5 rounded-md hover:bg-sunken transition min-h-[44px] sm:min-h-[auto]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset
+            <span>Reset</span>
           </button>
         </div>
       </div>
 
-      {/* Filter Inputs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" suppressHydrationWarning>
+      {/* Filter Inputs Grid (Collapsible on Mobile, Always Open on Tablet/Desktop) */}
+      <div className={`${mobileExpanded ? 'block' : 'hidden sm:grid'} grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 sm:pt-0`} suppressHydrationWarning>
         {/* City Filter */}
         <div suppressHydrationWarning>
           <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
@@ -159,7 +179,7 @@ export default function FilterBar() {
               setCity(val);
               applyFilters({ city: val });
             }}
-            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2.5 sm:py-2 text-xs font-medium text-primary focus:border-accent transition min-h-[44px] sm:min-h-[auto]"
           >
             {CITIES.map((c) => (
               <option key={c} value={c === 'All Cities' ? 'all' : c}>
@@ -182,7 +202,7 @@ export default function FilterBar() {
               setPropertyType(val);
               applyFilters({ propertyType: val });
             }}
-            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2.5 sm:py-2 text-xs font-medium text-primary focus:border-accent transition min-h-[44px] sm:min-h-[auto]"
           >
             {PROPERTY_TYPES.map((t) => (
               <option key={t.value} value={t.value}>
@@ -205,7 +225,7 @@ export default function FilterBar() {
               setBedrooms(val);
               applyFilters({ bedrooms: val });
             }}
-            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2.5 sm:py-2 text-xs font-medium text-primary focus:border-accent transition min-h-[44px] sm:min-h-[auto]"
           >
             <option value="all">Any BHK</option>
             <option value="1">1 BHK</option>
@@ -227,7 +247,7 @@ export default function FilterBar() {
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             onBlur={() => applyFilters({ minPrice })}
-            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2.5 sm:py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary min-h-[44px] sm:min-h-[auto]"
           />
         </div>
 
@@ -243,7 +263,7 @@ export default function FilterBar() {
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             onBlur={() => applyFilters({ maxPrice })}
-            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2.5 sm:py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary min-h-[44px] sm:min-h-[auto]"
           />
         </div>
       </div>
