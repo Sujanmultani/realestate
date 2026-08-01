@@ -12,8 +12,8 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
-    "embla-carousel-autoplay": "^8.5.1",
-    "embla-carousel-react": "^8.5.1",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "framer-motion": "^11.11.17",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.468.0",

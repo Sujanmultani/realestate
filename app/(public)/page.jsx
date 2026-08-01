@@ -9,19 +9,44 @@ import MarqueeStrip from '@/components/MarqueeStrip';
 import SpotlightEffect from '@/components/SpotlightEffect';
 import { Search, MapPin, Home as HomeIcon, Building, ArrowRight, TrendingUp } from 'lucide-react';
 
-export const revalidate = 60;
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [featuredProperties, session] = await Promise.all([
-    getFeaturedProperties(6),
-    auth(),
-  ]);
+  let featuredProperties = [];
+  let userFavorites = [];
+  let session = null;
+
+  try {
+    session = await auth();
+  } catch (e) {
+    // Optional auth on home page
+  }
+
+  try {
+    featuredProperties = await getFeaturedProperties(6);
+  } catch (e) {
+    console.error('Failed to load featured properties:', e);
+  }
 
   const spotlightId = featuredProperties[0]?._id?.toString() || null;
-  const trendingProperties = await getTrendingProperties(spotlightId, 8);
+  let trendingProperties = [];
 
-  const userFavorites = session?.user?.id ? await getUserFavorites(session.user.id) : [];
-  const favoritedIds = new Set(userFavorites.map((f) => f._id.toString()));
+  try {
+    trendingProperties = await getTrendingProperties(spotlightId, 8);
+  } catch (e) {
+    console.error('Failed to load trending properties:', e);
+  }
+
+  if (session?.user?.id) {
+    try {
+      userFavorites = await getUserFavorites(session.user.id);
+    } catch (e) {
+      console.error('Failed to load favorites:', e);
+    }
+  }
+
+  const favoritedIds = new Set(userFavorites.map((f) => f._id?.toString()));
 
   const cityHubs = [
     { name: 'Mumbai', count: '450+ Residences', image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=600&q=80' },
@@ -195,7 +220,7 @@ export default async function HomePage() {
               {/* Full-Width Editorial Spotlight Hero Row */}
               <PropertyCard
                 property={featuredProperties[0]}
-                isFavorited={favoritedIds.has(featuredProperties[0]._id.toString())}
+                isFavorited={favoritedIds.has(featuredProperties[0]._id?.toString())}
                 isLargeFeatured={true}
               />
 
@@ -206,7 +231,7 @@ export default async function HomePage() {
                     <PropertyCard
                       key={prop._id}
                       property={prop}
-                      isFavorited={favoritedIds.has(prop._id.toString())}
+                      isFavorited={favoritedIds.has(prop._id?.toString())}
                     />
                   ))}
                 </div>
