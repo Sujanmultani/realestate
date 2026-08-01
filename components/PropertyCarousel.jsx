@@ -1,7 +1,6 @@
 'use client';
 
 import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PropertyCard from './PropertyCard';
@@ -9,14 +8,15 @@ import PropertyCard from './PropertyCard';
 export default function PropertyCarousel({ properties = [], favoritedIds = new Set() }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState([]);
-  const autoplayRef = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
-  );
+  const [isPaused, setIsPaused] = useState(false);
+  const resumeTimeoutRef = useRef(null);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: 'start', slidesToScroll: 1 },
-    [autoplayRef.current]
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'start',
+    slidesToScroll: 1,
+    duration: 25,
+  });
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -28,23 +28,46 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
     setScrollSnaps(emblaApi.scrollSnapList());
     emblaApi.on('select', onSelect);
     onSelect();
+  }, [emblaApi, onSelect]);
 
-    // Fallback auto-slide interval (3 seconds) to guarantee smooth continuous rotation
+  // Auto-Slide Interval with Hover Pause & 1.5s Resume Delay
+  useEffect(() => {
+    if (!emblaApi || isPaused) return;
+
     const interval = setInterval(() => {
       if (emblaApi.canScrollNext()) {
         emblaApi.scrollNext();
       } else {
         emblaApi.scrollTo(0);
       }
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [emblaApi, onSelect]);
+  }, [emblaApi, isPaused]);
+
+  // Hover Handlers
+  const handleMouseEnter = () => {
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    // 1.5 second delay after cursor leaves before auto-slide resumes
+    resumeTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 1500);
+  };
 
   if (!properties.length) return null;
 
   return (
-    <div className="relative group/carousel">
+    <div
+      className="relative group/carousel"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Embla Viewport */}
       <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
         <div className="flex gap-6 -ml-6">
