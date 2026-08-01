@@ -9,27 +9,13 @@ import PropertyCard from './PropertyCard';
 export default function PropertyCarousel({ properties = [], favoritedIds = new Set() }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState([]);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e) => setReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  // Plugins array: Autoplay only if prefers-reduced-motion is NOT active
   const autoplayRef = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
+    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
   );
-
-  const plugins = reducedMotion ? [] : [autoplayRef.current];
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, align: 'start', slidesToScroll: 1 },
-    plugins
+    [autoplayRef.current]
   );
 
   const onSelect = useCallback(() => {
@@ -42,6 +28,17 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
     setScrollSnaps(emblaApi.scrollSnapList());
     emblaApi.on('select', onSelect);
     onSelect();
+
+    // Fallback auto-slide interval (3 seconds) to guarantee smooth continuous rotation
+    const interval = setInterval(() => {
+      if (emblaApi.canScrollNext()) {
+        emblaApi.scrollNext();
+      } else {
+        emblaApi.scrollTo(0);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, [emblaApi, onSelect]);
 
   if (!properties.length) return null;
@@ -49,16 +46,16 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
   return (
     <div className="relative group/carousel">
       {/* Embla Viewport */}
-      <div className="overflow-hidden" ref={emblaRef}>
+      <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
         <div className="flex gap-6 -ml-6">
           {properties.map((prop) => (
             <div
               key={prop._id}
-              className="flex-[0_0_82%] sm:flex-[0_0_45%] lg:flex-[0_0_28%] pl-6 shrink-0"
+              className="flex-[0_0_85%] sm:flex-[0_0_46%] lg:flex-[0_0_29%] pl-6 shrink-0"
             >
               <PropertyCard
                 property={prop}
-                isFavorited={favoritedIds.has(prop._id.toString())}
+                isFavorited={favoritedIds.has(prop._id?.toString())}
               />
             </div>
           ))}
@@ -70,7 +67,7 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
         type="button"
         suppressHydrationWarning
         onClick={() => emblaApi?.scrollPrev()}
-        className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface border border-border shadow-sm items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-sunken hover:border-border-strong text-primary z-20"
+        className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface border border-border shadow-sm items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-sunken text-primary z-20"
         title="Previous Residences"
       >
         <ChevronLeft className="w-5 h-5 text-primary" />
@@ -80,7 +77,7 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
         type="button"
         suppressHydrationWarning
         onClick={() => emblaApi?.scrollNext()}
-        className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface border border-border shadow-sm items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-sunken hover:border-border-strong text-primary z-20"
+        className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface border border-border shadow-sm items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-sunken text-primary z-20"
         title="Next Residences"
       >
         <ChevronRight className="w-5 h-5 text-primary" />
