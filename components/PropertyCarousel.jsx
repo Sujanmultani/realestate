@@ -30,7 +30,7 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
     onSelect();
   }, [emblaApi, onSelect]);
 
-  // Auto-Slide Interval with Hover Pause & 1.5s Resume Delay
+  // Auto-Slide Interval with Hover Pause & Snappy 400ms Resume Delay
   useEffect(() => {
     if (!emblaApi || isPaused) return;
 
@@ -40,7 +40,7 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
       } else {
         emblaApi.scrollTo(0);
       }
-    }, 4000);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, [emblaApi, isPaused]);
@@ -54,10 +54,10 @@ export default function PropertyCarousel({ properties = [], favoritedIds = new S
   };
 
   const handleMouseLeave = () => {
-    // 1.5 second delay after cursor leaves before auto-slide resumes
+    // Quick snappy 400ms delay after cursor leaves before auto-slide resumes
     resumeTimeoutRef.current = setTimeout(() => {
       setIsPaused(false);
-    }, 1500);
+    }, 400);
   };
 
   if (!properties.length) return null;
