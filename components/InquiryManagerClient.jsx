@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { updateInquiryStatusAction } from '@/lib/actions';
 import { Mail, Phone, Building2, Calendar, MessageSquare, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { formatPrice } from './PropertyCard';
@@ -39,132 +40,151 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">Buyer Lead Inquiries</h1>
-          <p className="text-xs text-slate-400">Review and manage buyer inquiries and contact leads.</p>
+          <span className="text-xs font-black uppercase tracking-widest text-brand-400">Customer Leads</span>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+            Inquiries Management
+          </h1>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Review and respond to direct buyer & tenant messages.</p>
         </div>
 
-        {/* Status Filters */}
-        <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl">
-          {['all', 'pending', 'contacted', 'closed'].map((st) => (
-            <button
-              key={st}
-              onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg capitalize transition ${
-                filterStatus === st ? 'bg-amber-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {st}
-            </button>
-          ))}
+        {/* Status Filter Pills */}
+        <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1.5 rounded-2xl">
+          {['all', 'pending', 'contacted', 'closed'].map((st) => {
+            const isActive = filterStatus === st;
+            return (
+              <motion.button
+                key={st}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setFilterStatus(st)}
+                className={`relative px-3.5 py-1.5 text-xs font-extrabold rounded-xl capitalize transition ${
+                  isActive ? 'text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeInquiryPill"
+                    className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{st}</span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Inquiries List Cards */}
+      {/* Inquiries Cards Grid */}
       {filteredInquiries.length > 0 ? (
         <div className="space-y-4">
           {filteredInquiries.map((inq) => (
-            <div
+            <motion.div
               key={inq._id}
-              className="bg-slate-800/80 border border-slate-700/60 rounded-3xl p-5 space-y-4 shadow-lg hover:border-slate-600 transition"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-modal space-y-4 hover:border-slate-700 transition"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700/60">
-                {/* Buyer info */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-brand-600/20 border border-brand-500/30 text-brand-300 flex items-center justify-center font-black">
+                    {inq.name?.charAt(0) || 'U'}
+                  </div>
+                  <div>
                     <h3 className="font-extrabold text-white text-base">{inq.name}</h3>
-                    <span
-                      className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded-md ${
-                        inq.status === 'pending'
-                          ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          : inq.status === 'contacted'
-                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                          : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      }`}
-                    >
-                      {inq.status}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
-                    <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-amber-400" /> {inq.email}</span>
-                    <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-amber-400" /> {inq.phone}</span>
-                    <span className="flex items-center gap-1.5 text-slate-500">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(inq.createdAt).toLocaleString('en-IN', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
+                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      {new Date(inq.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
-                    </span>
+                    </p>
                   </div>
                 </div>
 
-                {/* Status change actions */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold text-slate-400 mr-1">Mark Status:</span>
-                  <button
-                    onClick={() => handleStatusUpdate(inq._id, 'pending')}
-                    disabled={updatingId === inq._id || inq.status === 'pending'}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                      inq.status === 'pending' ? 'bg-amber-500/30 text-amber-300' : 'bg-slate-700 text-slate-400 hover:text-white'
+                  <span
+                    className={`px-3 py-1 text-xs font-black uppercase rounded-xl border ${
+                      inq.status === 'pending'
+                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                        : inq.status === 'contacted'
+                        ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                        : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                     }`}
                   >
-                    Pending
-                  </button>
-                  <button
-                    onClick={() => handleStatusUpdate(inq._id, 'contacted')}
-                    disabled={updatingId === inq._id || inq.status === 'contacted'}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                      inq.status === 'contacted' ? 'bg-blue-500/30 text-blue-300' : 'bg-slate-700 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Contacted
-                  </button>
-                  <button
-                    onClick={() => handleStatusUpdate(inq._id, 'closed')}
-                    disabled={updatingId === inq._id || inq.status === 'closed'}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                      inq.status === 'closed' ? 'bg-emerald-500/30 text-emerald-300' : 'bg-slate-700 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Closed
-                  </button>
-                </div>
-              </div>
+                    {inq.status}
+                  </span>
 
-              {/* Message body & property preview */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                <div className="md:col-span-2 space-y-1.5 bg-slate-900/60 p-3.5 rounded-2xl border border-slate-700/40">
-                  <p className="font-semibold text-slate-400 uppercase text-[10px] tracking-wider">Buyer Message</p>
-                  <p className="text-slate-200 leading-relaxed font-normal">{inq.message}</p>
-                </div>
-
-                {inq.property && (
-                  <div className="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-700/40 space-y-1">
-                    <p className="font-semibold text-slate-400 uppercase text-[10px] tracking-wider">Target Property</p>
-                    <a
-                      href={`/property/${inq.property._id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-amber-400 hover:underline block truncate"
+                  {/* Status Action Buttons */}
+                  {inq.status !== 'contacted' && (
+                    <motion.button
+                      whileTap={{ scale: 0.92 }}
+                      disabled={updatingId === inq._id}
+                      onClick={() => handleStatusUpdate(inq._id, 'contacted')}
+                      className="px-3 py-1.5 bg-blue-600/90 hover:bg-blue-600 text-white rounded-xl text-xs font-bold transition"
                     >
-                      {inq.property.title}
-                    </a>
-                    <p className="text-slate-300 font-semibold">
-                      {formatPrice(inq.property.price, inq.property.listingType)}
-                    </p>
-                    <p className="text-slate-500 text-[11px] truncate">
-                      {inq.property.address?.locality}, {inq.property.address?.city}
-                    </p>
-                  </div>
-                )}
+                      Mark Contacted
+                    </motion.button>
+                  )}
+
+                  {inq.status !== 'closed' && (
+                    <motion.button
+                      whileTap={{ scale: 0.92 }}
+                      disabled={updatingId === inq._id}
+                      onClick={() => handleStatusUpdate(inq._id, 'closed')}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition"
+                    >
+                      Close Inquiry
+                    </motion.button>
+                  )}
+                </div>
               </div>
-            </div>
+
+              {/* Inquiry Property Reference */}
+              {inq.property && (
+                <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 font-bold text-white truncate max-w-lg">
+                    <Building2 className="w-4 h-4 text-brand-400 shrink-0" />
+                    <span className="truncate">{inq.property.title}</span>
+                  </div>
+                  <span className="font-extrabold text-brand-300">
+                    {formatPrice(inq.property.price, inq.property.listingType)}
+                  </span>
+                </div>
+              )}
+
+              {/* Customer Message */}
+              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs">
+                <div className="flex items-center gap-2 text-slate-400 font-bold">
+                  <MessageSquare className="w-4 h-4 text-slate-500" />
+                  <span>Customer Message</span>
+                </div>
+                <p className="text-slate-200 leading-relaxed font-medium">{inq.message}</p>
+              </div>
+
+              {/* Contact Details */}
+              <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-300 pt-1">
+                <a href={`tel:${inq.phone}`} className="flex items-center gap-1.5 hover:text-brand-400 transition">
+                  <Phone className="w-3.5 h-3.5 text-brand-400" />
+                  <span>{inq.phone}</span>
+                </a>
+                <a href={`mailto:${inq.email}`} className="flex items-center gap-1.5 hover:text-brand-400 transition">
+                  <Mail className="w-3.5 h-3.5 text-brand-400" />
+                  <span>{inq.email}</span>
+                </a>
+              </div>
+            </motion.div>
           ))}
         </div>
       ) : (
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-12 text-center text-slate-400">
-          No inquiries matching status filter "{filterStatus}".
+        <div className="glass-panel rounded-3xl p-12 text-center border border-slate-800 max-w-md mx-auto space-y-3">
+          <MessageSquare className="w-10 h-10 text-slate-600 mx-auto" />
+          <h3 className="text-lg font-bold text-white">No inquiries found</h3>
+          <p className="text-xs text-slate-400">There are no customer inquiries matching the selected filter status.</p>
         </div>
       )}
     </div>

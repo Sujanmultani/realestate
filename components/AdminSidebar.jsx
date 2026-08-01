@@ -2,73 +2,69 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Building2, MessageSquareText, Home, LogOut } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { motion } from 'framer-motion';
+import { LayoutDashboard, Building2, MessageSquare, ArrowLeft, Shield } from 'lucide-react';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
 
   const links = [
-    { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { label: 'Properties', href: '/admin/properties', icon: Building2 },
-    { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquareText },
+    { label: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
+    { label: 'Manage Properties', href: '/admin/properties', icon: Building2 },
+    { label: 'Manage Inquiries', href: '/admin/inquiries', icon: MessageSquare },
   ];
 
   return (
-    <aside className="w-full lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 min-h-screen p-4 flex flex-col justify-between">
-      <div>
-        {/* Brand Header */}
-        <div className="p-3 mb-6 border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-900 font-bold flex items-center justify-center text-sm">
-              AD
-            </div>
-            <div>
-              <h2 className="font-extrabold text-white text-base leading-none">Admin Panel</h2>
-              <p className="text-[10px] text-amber-400 font-bold uppercase mt-1">Management Portal</p>
-            </div>
+    <aside className="w-full md:w-64 bg-slate-900/90 border-r border-slate-800/80 p-6 flex flex-col justify-between shrink-0">
+      <div className="space-y-6">
+        {/* Admin Header */}
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center font-bold">
+            <Shield className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="font-black text-white text-sm">Admin Console</h2>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Management</p>
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="space-y-1">
+        {/* Navigation Links */}
+        <nav className="space-y-1.5">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
             return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
-                  isActive
-                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{link.label}</span>
+              <Link key={link.href} href={link.href} className="block relative">
+                {isActive && (
+                  <motion.div
+                    layoutId="adminNavTab"
+                    className="absolute inset-0 bg-brand-600/20 border-l-4 border-brand-500 rounded-r-xl"
+                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                  />
+                )}
+                <div
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition relative z-10 ${
+                    isActive ? 'text-brand-300 font-black' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-brand-400' : 'text-slate-500'}`} />
+                  <span>{link.label}</span>
+                </div>
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Footer Controls */}
-      <div className="pt-4 border-t border-slate-800 space-y-2">
+      {/* Back to Site Button */}
+      <div className="pt-6 border-t border-slate-800">
         <Link
           href="/"
-          className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-400 hover:text-white transition"
+          className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white px-3 py-2 rounded-xl hover:bg-slate-800 transition"
         >
-          <Home className="w-4 h-4" />
-          <span>Return to Portal</span>
+          <ArrowLeft className="w-4 h-4 text-brand-400" />
+          <span>Exit to Public Portal</span>
         </Link>
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 rounded-xl transition text-left"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Sign Out</span>
-        </button>
       </div>
     </aside>
   );

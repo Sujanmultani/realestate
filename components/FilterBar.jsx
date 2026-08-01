@@ -2,7 +2,8 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useState, useEffect } from 'react';
-import { Search, RotateCcw, Filter, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { RotateCcw, ArrowUpDown, Filter } from 'lucide-react';
 
 const CITIES = ['All Cities', 'Mumbai', 'Bengaluru', 'Ahmedabad', 'Pune', 'Gurugram', 'Hyderabad', 'Delhi'];
 const PROPERTY_TYPES = [
@@ -28,7 +29,7 @@ export default function FilterBar() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [sort, setSort] = useState(searchParams.get('sort') || 'newest');
 
-  // Sync state with URL when searchParams change (e.g. Back/Forward button)
+  // Sync state with URL when searchParams change
   useEffect(() => {
     setCity(searchParams.get('city') || 'all');
     setListingType(searchParams.get('listingType') || 'all');
@@ -62,7 +63,6 @@ export default function FilterBar() {
         }
       });
 
-      // Reset to page 1 on filter change
       params.delete('page');
 
       const queryString = params.toString();
@@ -84,40 +84,49 @@ export default function FilterBar() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 lg:p-6 mb-8 space-y-4" suppressHydrationWarning>
+    <div className="glass-panel rounded-3xl border border-slate-800 p-4 lg:p-6 mb-8 space-y-4 shadow-modal" suppressHydrationWarning>
       {/* Header bar: Listing type pills + Sort */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100" suppressHydrationWarning>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80" suppressHydrationWarning>
         {/* Listing Type Toggle Pills */}
-        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl w-full sm:w-auto" suppressHydrationWarning>
+        <div className="flex items-center gap-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 w-full sm:w-auto" suppressHydrationWarning>
           {[
             { label: 'All Properties', value: 'all' },
             { label: 'For Sale', value: 'sale' },
             { label: 'For Rent', value: 'rent' },
-          ].map((type) => (
-            <button
-              type="button"
-              key={type.value}
-              suppressHydrationWarning
-              onClick={() => {
-                setListingType(type.value);
-                applyFilters({ listingType: type.value });
-              }}
-              className={`flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition ${
-                listingType === type.value
-                  ? 'bg-white text-brand-700 shadow-sm font-extrabold'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              {type.label}
-            </button>
-          ))}
+          ].map((type) => {
+            const isActive = listingType === type.value;
+            return (
+              <motion.button
+                type="button"
+                key={type.value}
+                whileTap={{ scale: 0.95 }}
+                suppressHydrationWarning
+                onClick={() => {
+                  setListingType(type.value);
+                  applyFilters({ listingType: type.value });
+                }}
+                className={`relative flex-1 sm:flex-none px-4 py-2 text-xs font-extrabold rounded-xl transition ${
+                  isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeFilterPill"
+                    className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{type.label}</span>
+              </motion.button>
+            );
+          })}
         </div>
 
         {/* Sort & Reset Buttons */}
         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end" suppressHydrationWarning>
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500" suppressHydrationWarning>
-            <ArrowUpDown className="w-3.5 h-3.5" />
-            <span>Sort By:</span>
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-400" suppressHydrationWarning>
+            <ArrowUpDown className="w-3.5 h-3.5 text-brand-400" />
+            <span>Sort:</span>
             <select
               value={sort}
               suppressHydrationWarning
@@ -125,24 +134,25 @@ export default function FilterBar() {
                 setSort(e.target.value);
                 applyFilters({ sort: e.target.value });
               }}
-              className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
-              <option value="newest">Newest First</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="popular">Most Popular</option>
+              <option value="newest" className="bg-slate-900">Newest First</option>
+              <option value="price_asc" className="bg-slate-900">Price: Low to High</option>
+              <option value="price_desc" className="bg-slate-900">Price: High to Low</option>
+              <option value="popular" className="bg-slate-900">Most Popular</option>
             </select>
           </div>
 
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.93 }}
             suppressHydrationWarning
             onClick={handleReset}
-            className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-red-600 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition"
+            className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-red-400 px-3 py-1.5 rounded-xl hover:bg-red-500/10 transition"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -150,7 +160,7 @@ export default function FilterBar() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" suppressHydrationWarning>
         {/* City Filter */}
         <div suppressHydrationWarning>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
             City
           </label>
           <select
@@ -161,10 +171,10 @@ export default function FilterBar() {
               setCity(val);
               applyFilters({ city: val });
             }}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-500 focus:bg-white transition"
+            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
           >
             {CITIES.map((c) => (
-              <option key={c} value={c === 'All Cities' ? 'all' : c}>
+              <option key={c} value={c === 'All Cities' ? 'all' : c} className="bg-slate-900">
                 {c}
               </option>
             ))}
@@ -173,8 +183,8 @@ export default function FilterBar() {
 
         {/* Property Type */}
         <div suppressHydrationWarning>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-            Property Type
+          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            Category
           </label>
           <select
             value={propertyType}
@@ -184,10 +194,10 @@ export default function FilterBar() {
               setPropertyType(val);
               applyFilters({ propertyType: val });
             }}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-500 focus:bg-white transition"
+            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
           >
             {PROPERTY_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
+              <option key={t.value} value={t.value} className="bg-slate-900">
                 {t.label}
               </option>
             ))}
@@ -196,7 +206,7 @@ export default function FilterBar() {
 
         {/* Bedrooms */}
         <div suppressHydrationWarning>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
             Bedrooms (BHK)
           </label>
           <select
@@ -207,19 +217,19 @@ export default function FilterBar() {
               setBedrooms(val);
               applyFilters({ bedrooms: val });
             }}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-500 focus:bg-white transition"
+            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
           >
-            <option value="all">Any BHK</option>
-            <option value="1">1 BHK</option>
-            <option value="2">2 BHK</option>
-            <option value="3">3 BHK</option>
-            <option value="4">4+ BHK</option>
+            <option value="all" className="bg-slate-900">Any BHK</option>
+            <option value="1" className="bg-slate-900">1 BHK</option>
+            <option value="2" className="bg-slate-900">2 BHK</option>
+            <option value="3" className="bg-slate-900">3 BHK</option>
+            <option value="4" className="bg-slate-900">4+ BHK</option>
           </select>
         </div>
 
         {/* Min Price */}
         <div suppressHydrationWarning>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
             Min Price (₹)
           </label>
           <input
@@ -229,13 +239,13 @@ export default function FilterBar() {
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             onBlur={() => applyFilters({ minPrice })}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-500 focus:bg-white transition placeholder:text-slate-400"
+            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition placeholder:text-slate-600"
           />
         </div>
 
         {/* Max Price */}
         <div suppressHydrationWarning>
-          <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
             Max Price (₹)
           </label>
           <input
@@ -245,7 +255,7 @@ export default function FilterBar() {
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             onBlur={() => applyFilters({ maxPrice })}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-500 focus:bg-white transition placeholder:text-slate-400"
+            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition placeholder:text-slate-600"
           />
         </div>
       </div>
