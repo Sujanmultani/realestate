@@ -207,7 +207,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-border">
               <div className="space-y-3 pr-4">
                 <span className="text-2xl font-display font-medium text-accent">01</span>
-                <h3 className="text-lg font-bold text-primary">Physical Title Audit</h3>
+                <h3 className="font-display font-medium text-lg text-primary">Physical Title Audit</h3>
                 <p className="text-secondary text-sm leading-relaxed">
                   We inspect land registry records, 7/12 extracts, and RERA approval certificates before publishing any property listing.
                 </p>
@@ -215,7 +215,7 @@ export default async function HomePage() {
 
               <div className="space-y-3 pt-6 md:pt-0 md:px-6">
                 <span className="text-2xl font-display font-medium text-accent">02</span>
-                <h3 className="text-lg font-bold text-primary">Direct Owner Negotiation</h3>
+                <h3 className="font-display font-medium text-lg text-primary">Direct Owner Negotiation</h3>
                 <p className="text-secondary text-sm leading-relaxed">
                   You deal directly with verified property owners or authorized builder reps with zero middleman markups.
                 </p>
@@ -223,7 +223,7 @@ export default async function HomePage() {
 
               <div className="space-y-3 pt-6 md:pt-0 md:pl-6">
                 <span className="text-2xl font-display font-medium text-accent">03</span>
-                <h3 className="text-lg font-bold text-primary">Legal Agreement Support</h3>
+                <h3 className="font-display font-medium text-lg text-primary">Legal Agreement Support</h3>
                 <p className="text-secondary text-sm leading-relaxed">
                   Get standardized sale agreement drafts, stamp duty guidance, and home loan documentation assistance.
                 </p>
@@ -251,11 +251,12 @@ export default async function HomePage() {
                 <img
                   src={city.image}
                   alt={city.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-70 group-hover:opacity-85"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white z-10">
                   <h3 className="font-display font-medium text-lg text-white">{city.name}</h3>
-                  <p className="text-xs text-slate-200 font-medium">{city.count}</p>
+                  <p className="text-xs text-bg font-medium">{city.count}</p>
                 </div>
               </Link>
             ))}
