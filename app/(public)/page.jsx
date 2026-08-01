@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import { getFeaturedProperties, getUserFavorites } from '@/lib/data';
+import { getFeaturedProperties, getTrendingProperties, getUserFavorites } from '@/lib/data';
 import { auth } from '@/lib/auth';
 import PropertyCard from '@/components/PropertyCard';
+import PropertyCarousel from '@/components/PropertyCarousel';
 import { ScrollReveal, AnimatedCounter } from '@/components/MotionWrapper';
 import TextEffect from '@/components/TextEffect';
 import MarqueeStrip from '@/components/MarqueeStrip';
 import SpotlightEffect from '@/components/SpotlightEffect';
-import { Search, MapPin, Home as HomeIcon, Building, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Home as HomeIcon, Building, ArrowRight, TrendingUp } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -15,6 +16,9 @@ export default async function HomePage() {
     getFeaturedProperties(6),
     auth(),
   ]);
+
+  const spotlightId = featuredProperties[0]?._id?.toString() || null;
+  const trendingProperties = await getTrendingProperties(spotlightId, 8);
 
   const userFavorites = session?.user?.id ? await getUserFavorites(session.user.id) : [];
   const favoritedIds = new Set(userFavorites.map((f) => f._id.toString()));
@@ -215,6 +219,32 @@ export default async function HomePage() {
           )}
         </ScrollReveal>
       </section>
+
+      {/* NEW SECTION: Auto-Sliding Trending Properties Carousel */}
+      {trendingProperties.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-widest text-accent flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  Most Viewed
+                </span>
+                <h2 className="font-display font-normal text-3xl text-primary mt-1">Trending Residences</h2>
+              </div>
+              <Link
+                href="/listings?sort=popular"
+                className="flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition group"
+              >
+                <span>Browse Popular</span>
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            <PropertyCarousel properties={trendingProperties} favoritedIds={favoritedIds} />
+          </ScrollReveal>
+        </section>
+      )}
 
       {/* Editorial Process Standards */}
       <section className="bg-sunken border-y border-border py-20">
