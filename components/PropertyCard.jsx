@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Bed, Bath, Maximize2, MapPin, Building } from 'lucide-react';
+import { Bed, Bath, Maximize2, MapPin, Building, Sparkles, ArrowRight } from 'lucide-react';
 import FavoriteButton from './FavoriteButton';
 
 export function formatPrice(price, listingType) {
@@ -47,68 +47,68 @@ export default function PropertyCard({ property, isFavorited = false, isLargeFea
   if (isLargeFeatured) {
     return (
       <motion.div
-        whileHover={{ y: -4 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="group md:col-span-2 lg:col-span-2 bg-surface rounded-lg border border-border shadow-sm hover:shadow-hover transition-all duration-300 grid grid-cols-1 md:grid-cols-12 overflow-hidden"
+        whileHover={{ y: -6 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="group relative w-full aspect-[21/9] md:aspect-[2.4/1] rounded-xl overflow-hidden border border-border shadow-md hover:shadow-hover transition-shadow duration-300"
       >
-        {/* Image Side */}
-        <div className="md:col-span-7 relative aspect-[16/10] md:aspect-auto w-full overflow-hidden bg-sunken">
-          <Link href={`/property/${_id}`} className="block w-full h-full">
-            <motion.img
-              src={primaryImage}
-              alt={title}
-              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-              loading="lazy"
-            />
-          </Link>
+        {/* Full-bleed image with cinematic slow zoom */}
+        <motion.img
+          src={primaryImage}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+          loading="lazy"
+        />
 
-          <div className="absolute top-3 left-3 flex gap-2 z-10">
-            <span className="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-sm bg-accent text-white shadow-sm">
-              Prime Listing
-            </span>
-            <span className="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider rounded-sm bg-surface text-primary border border-border">
-              For {listingType === 'sale' ? 'Sale' : 'Rent'}
-            </span>
-          </div>
+        {/* Functional Legibility Scrim */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-          <div className="absolute top-3 right-3 z-10">
-            <FavoriteButton propertyId={_id.toString()} initialIsFavorited={isFavorited} />
-          </div>
+        {/* Top Badges */}
+        <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
+          <span className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-sm bg-accent text-white shadow-sm">
+            <Sparkles className="w-3.5 h-3.5" />
+            Prime Listing
+          </span>
+          <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-sm bg-black/60 text-white border border-white/20 backdrop-blur-md">
+            For {listingType === 'sale' ? 'Sale' : 'Rent'}
+          </span>
         </div>
 
-        {/* Content Side */}
-        <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
-          <div>
-            <div className="flex items-center gap-1.5 text-xs text-secondary mb-2 font-medium">
-              <MapPin className="w-3.5 h-3.5 text-secondary shrink-0" />
-              <span className="truncate">{address?.locality}, {address?.city}</span>
-            </div>
+        {/* Top Right Favorite Button */}
+        <div className="absolute top-4 right-4 z-10">
+          <FavoriteButton propertyId={_id.toString()} initialIsFavorited={isFavorited} />
+        </div>
 
-            <Link href={`/property/${_id}`} className="block group-hover:text-accent transition-colors">
-              <h3 className="font-display font-medium text-primary text-2xl leading-tight tracking-tight line-clamp-2">
-                {title}
-              </h3>
-            </Link>
-
-            <p className="text-secondary text-sm mt-3 line-clamp-3 leading-relaxed">
-              {property.description}
-            </p>
+        {/* Bottom Overlaid Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white z-10">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-white/80 mb-2">
+            <MapPin className="w-3.5 h-3.5 text-white/80 shrink-0" />
+            <span>{address?.locality}, {address?.city}</span>
           </div>
 
-          <div>
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <p className="text-xs text-secondary font-medium uppercase tracking-wider">Asking Price</p>
-                <p className="text-xl font-sans font-bold text-primary mt-0.5">{formatPrice(price, listingType)}</p>
-              </div>
+          <Link href={`/property/${_id}`} className="block group-hover:text-white/90 transition-colors">
+            <h3 className="font-display font-medium text-2xl md:text-4xl text-white leading-tight tracking-tight mb-4 max-w-2xl line-clamp-2">
+              {title}
+            </h3>
+          </Link>
 
-              <Link
-                href={`/property/${_id}`}
-                className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-md transition"
-              >
-                View Residence
-              </Link>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex items-center gap-3 text-xs sm:text-sm text-white/90 font-medium">
+              {bedrooms && <span>{bedrooms} BHK</span>}
+              {bedrooms && <span className="w-1 h-1 rounded-full bg-white/50" />}
+              {areaSqft && <span>{areaSqft?.toLocaleString('en-IN')} sqft</span>}
+              {areaSqft && <span className="w-1 h-1 rounded-full bg-white/50" />}
+              <span className="text-base sm:text-lg font-sans font-bold text-white">
+                {formatPrice(price, listingType)}
+              </span>
             </div>
+
+            <Link
+              href={`/property/${_id}`}
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-white text-primary font-semibold text-sm rounded-md hover:bg-white/90 transition group/btn shadow-sm"
+            >
+              <span>View Residence</span>
+              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       </motion.div>

@@ -28,7 +28,7 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-20 pb-20 relative">
-      {/* 3. Spotlight Effect (Desktop Only) */}
+      {/* Spotlight Effect (Desktop Only) */}
       <SpotlightEffect />
 
       {/* 1. Hero Section with Word-by-Word Text Reveal */}
@@ -42,7 +42,7 @@ export default async function HomePage() {
                 Direct Owner Real Estate
               </span>
 
-              {/* Text Reveal Component (Aceternity / Motion Primitives Text Effect) */}
+              {/* Text Reveal Component */}
               <TextEffect
                 text="Properties of distinction, listed directly by owners."
                 className="font-display text-4xl sm:text-5xl lg:text-5xl font-normal text-primary tracking-tight leading-[1.08]"
@@ -135,10 +135,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2. Marquee Strip Component (Magic UI Marquee Adaptation) */}
+      {/* Marquee Strip Component */}
       <MarqueeStrip />
 
-      {/* 5. Bento Grid Hover Reveal Section */}
+      {/* Bento Grid Hover Reveal Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <ScrollReveal>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-surface p-8 sm:p-12 rounded-xl border border-border shadow-sm hover:shadow-hover hover:border-accent/40 transition-all duration-300">
@@ -169,7 +169,7 @@ export default async function HomePage() {
         </ScrollReveal>
       </section>
 
-      {/* Featured Properties Portfolio */}
+      {/* Featured Properties Portfolio (Full-Width Editorial Spotlight Row + 3-Col Grid) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
@@ -182,20 +182,31 @@ export default async function HomePage() {
               className="flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition group"
             >
               <span>View All Properties</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
             </Link>
           </div>
 
           {featuredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProperties.map((prop, idx) => (
-                <PropertyCard
-                  key={prop._id}
-                  property={prop}
-                  isFavorited={favoritedIds.has(prop._id.toString())}
-                  isLargeFeatured={idx === 0}
-                />
-              ))}
+            <div className="space-y-6">
+              {/* Full-Width Editorial Spotlight Hero Row */}
+              <PropertyCard
+                property={featuredProperties[0]}
+                isFavorited={favoritedIds.has(featuredProperties[0]._id.toString())}
+                isLargeFeatured={true}
+              />
+
+              {/* Standard 3-Column Grid for Remaining Featured Properties */}
+              {featuredProperties.length > 1 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+                  {featuredProperties.slice(1).map((prop) => (
+                    <PropertyCard
+                      key={prop._id}
+                      property={prop}
+                      isFavorited={favoritedIds.has(prop._id.toString())}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="bg-surface rounded-lg p-12 text-center border border-border">
