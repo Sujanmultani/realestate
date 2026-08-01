@@ -15,7 +15,7 @@ export default function ContactModal({ property, isOpen, onClose }) {
     name: session?.user?.name || '',
     email: session?.user?.email || '',
     phone: '',
-    message: `Hi, I am interested in "${property?.title}". Please provide more details or schedule a call.`,
+    message: `Hi, I am interested in "${property?.title}". Please provide more details or schedule a private viewing.`,
   });
 
   if (!property) return null;
@@ -55,142 +55,136 @@ export default function ContactModal({ property, isOpen, onClose }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm">
           <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 10 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="glass-panel rounded-3xl max-w-lg w-full shadow-modal border border-slate-800 overflow-hidden relative"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.2 }}
+            className="bg-surface rounded-xl max-w-lg w-full shadow-lg border border-border overflow-hidden relative"
           >
             {/* Header */}
-            <div className="bg-slate-900 border-b border-slate-800 p-6 relative">
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
+            <div className="bg-bg border-b border-border p-6 relative">
+              <button
+                type="button"
+                suppressHydrationWarning
                 onClick={onClose}
-                className="absolute top-5 right-5 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                className="absolute top-5 right-5 p-1.5 rounded-md bg-surface hover:bg-sunken text-secondary transition"
               >
                 <X className="w-4 h-4" />
-              </motion.button>
+              </button>
 
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-400">
-                Contact Owner / Agent
+              <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                Direct Owner Inquiry
               </span>
-              <h2 className="text-xl font-black text-white mt-1 pr-6 line-clamp-1">
+              <h2 className="font-display font-medium text-xl text-primary mt-1 pr-6 truncate">
                 {property.title}
               </h2>
-              <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                <Building2 className="w-3.5 h-3.5 text-brand-400" />
-                Listed by {property.ownerName || 'Property Owner'}
+              <p className="text-xs text-secondary mt-1 flex items-center gap-1">
+                <Building2 className="w-3.5 h-3.5 text-secondary" />
+                Listed by {property.ownerName || 'Property Representative'}
               </p>
             </div>
 
-            {/* Modal Body */}
+            {/* Form */}
             <div className="p-6">
               {status.success ? (
                 <div className="py-8 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-full bg-accent-subtle text-accent border border-accent/20 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-7 h-7" />
                   </div>
-                  <h3 className="text-lg font-extrabold text-white">Inquiry Sent!</h3>
-                  <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+                  <h3 className="font-display font-medium text-xl text-primary">Inquiry Received</h3>
+                  <p className="text-sm text-secondary max-w-sm mx-auto leading-relaxed">
                     {status.message}
                   </p>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                  <button
+                    type="button"
+                    suppressHydrationWarning
                     onClick={onClose}
-                    className="mt-4 px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-extrabold rounded-xl text-xs shadow-glow transition"
+                    className="mt-4 px-6 py-2.5 bg-accent text-white font-semibold rounded-md text-sm hover:bg-accent-hover transition"
                   >
                     Close Window
-                  </motion.button>
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {status.error && (
-                    <div className="p-3.5 rounded-xl bg-red-500/20 text-red-300 text-xs font-semibold border border-red-500/30">
+                    <div className="p-3 rounded-md bg-red-50 text-semantic-error text-xs font-semibold border border-red-200">
                       {status.error}
                     </div>
                   )}
 
-                  {/* Name Input */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Your Full Name</label>
+                    <label className="block text-xs font-medium text-secondary mb-1">Your Full Name</label>
                     <div className="relative">
-                      <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <User className="w-4 h-4 text-tertiary absolute left-3 top-3" />
                       <input
                         type="text"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="John Doe"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        placeholder="Jane Doe"
+                        className="w-full bg-sunken border border-border rounded-md pl-9 pr-3 py-2 text-sm text-primary focus:border-accent transition"
                       />
                     </div>
                   </div>
 
-                  {/* Email Input */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                    <label className="block text-xs font-medium text-secondary mb-1">Email Address</label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <Mail className="w-4 h-4 text-tertiary absolute left-3 top-3" />
                       <input
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="john@example.com"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        placeholder="jane@example.com"
+                        className="w-full bg-sunken border border-border rounded-md pl-9 pr-3 py-2 text-sm text-primary focus:border-accent transition"
                       />
                     </div>
                   </div>
 
-                  {/* Phone Input */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+                    <label className="block text-xs font-medium text-secondary mb-1">Phone Number</label>
                     <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <Phone className="w-4 h-4 text-tertiary absolute left-3 top-3" />
                       <input
                         type="tel"
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+91 98765 43210"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        className="w-full bg-sunken border border-border rounded-md pl-9 pr-3 py-2 text-sm text-primary focus:border-accent transition"
                       />
                     </div>
                   </div>
 
-                  {/* Message */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Message</label>
+                    <label className="block text-xs font-medium text-secondary mb-1">Message</label>
                     <div className="relative">
-                      <MessageSquare className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <MessageSquare className="w-4 h-4 text-tertiary absolute left-3 top-3" />
                       <textarea
                         rows={3}
                         required
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        className="w-full bg-sunken border border-border rounded-md pl-9 pr-3 py-2 text-sm text-primary focus:border-accent transition"
                       />
                     </div>
                   </div>
 
-                  {/* Submit Button */}
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileTap={{ scale: 0.98 }}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-extrabold rounded-xl text-xs shadow-glow transition disabled:opacity-50 mt-2"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-md text-sm transition disabled:opacity-50 mt-2"
                   >
                     {loading ? (
                       <span>Sending Inquiry...</span>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        <span>Send Inquiry to Owner</span>
+                        <span>Send Direct Inquiry</span>
                       </>
                     )}
                   </motion.button>

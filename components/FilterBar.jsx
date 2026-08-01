@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, ArrowUpDown, Filter } from 'lucide-react';
+import { RotateCcw, ArrowUpDown } from 'lucide-react';
 
 const CITIES = ['All Cities', 'Mumbai', 'Bengaluru', 'Ahmedabad', 'Pune', 'Gurugram', 'Hyderabad', 'Delhi'];
 const PROPERTY_TYPES = [
@@ -20,7 +20,6 @@ export default function FilterBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Local state initialized from searchParams
   const [city, setCity] = useState(searchParams.get('city') || 'all');
   const [listingType, setListingType] = useState(searchParams.get('listingType') || 'all');
   const [propertyType, setPropertyType] = useState(searchParams.get('propertyType') || 'all');
@@ -29,7 +28,6 @@ export default function FilterBar() {
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [sort, setSort] = useState(searchParams.get('sort') || 'newest');
 
-  // Sync state with URL when searchParams change
   useEffect(() => {
     setCity(searchParams.get('city') || 'all');
     setListingType(searchParams.get('listingType') || 'all');
@@ -40,7 +38,6 @@ export default function FilterBar() {
     setSort(searchParams.get('sort') || 'newest');
   }, [searchParams]);
 
-  // Construct search params string and navigate
   const applyFilters = useCallback(
     (overrides = {}) => {
       const params = new URLSearchParams(searchParams);
@@ -84,48 +81,40 @@ export default function FilterBar() {
   };
 
   return (
-    <div className="glass-panel rounded-3xl border border-slate-800 p-4 lg:p-6 mb-8 space-y-4 shadow-modal" suppressHydrationWarning>
-      {/* Header bar: Listing type pills + Sort */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80" suppressHydrationWarning>
-        {/* Listing Type Toggle Pills */}
-        <div className="flex items-center gap-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 w-full sm:w-auto" suppressHydrationWarning>
+    <div className="bg-surface rounded-lg border border-border p-4 lg:p-6 mb-8 space-y-4 shadow-sm" suppressHydrationWarning>
+      {/* Top Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-border" suppressHydrationWarning>
+        {/* Type Toggle Pills */}
+        <div className="flex items-center gap-1 bg-sunken p-1 rounded-md border border-border w-full sm:w-auto" suppressHydrationWarning>
           {[
-            { label: 'All Properties', value: 'all' },
+            { label: 'All Listings', value: 'all' },
             { label: 'For Sale', value: 'sale' },
             { label: 'For Rent', value: 'rent' },
           ].map((type) => {
             const isActive = listingType === type.value;
             return (
-              <motion.button
+              <button
                 type="button"
                 key={type.value}
-                whileTap={{ scale: 0.95 }}
                 suppressHydrationWarning
                 onClick={() => {
                   setListingType(type.value);
                   applyFilters({ listingType: type.value });
                 }}
-                className={`relative flex-1 sm:flex-none px-4 py-2 text-xs font-extrabold rounded-xl transition ${
-                  isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                className={`relative flex-1 sm:flex-none px-4 py-1.5 text-xs font-semibold rounded-sm transition ${
+                  isActive ? 'text-white bg-accent' : 'text-secondary hover:text-primary'
                 }`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeFilterPill"
-                    className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{type.label}</span>
-              </motion.button>
+                {type.label}
+              </button>
             );
           })}
         </div>
 
-        {/* Sort & Reset Buttons */}
+        {/* Sort & Reset */}
         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end" suppressHydrationWarning>
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-400" suppressHydrationWarning>
-            <ArrowUpDown className="w-3.5 h-3.5 text-brand-400" />
+          <div className="flex items-center gap-2 text-xs font-medium text-secondary" suppressHydrationWarning>
+            <ArrowUpDown className="w-3.5 h-3.5 text-secondary" />
             <span>Sort:</span>
             <select
               value={sort}
@@ -134,33 +123,32 @@ export default function FilterBar() {
                 setSort(e.target.value);
                 applyFilters({ sort: e.target.value });
               }}
-              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-white text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="bg-sunken border border-border rounded-md px-3 py-1.5 text-primary text-xs font-semibold focus:outline-none focus:border-accent"
             >
-              <option value="newest" className="bg-slate-900">Newest First</option>
-              <option value="price_asc" className="bg-slate-900">Price: Low to High</option>
-              <option value="price_desc" className="bg-slate-900">Price: High to Low</option>
-              <option value="popular" className="bg-slate-900">Most Popular</option>
+              <option value="newest">Newest First</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="popular">Most Popular</option>
             </select>
           </div>
 
-          <motion.button
+          <button
             type="button"
-            whileTap={{ scale: 0.93 }}
             suppressHydrationWarning
             onClick={handleReset}
-            className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-red-400 px-3 py-1.5 rounded-xl hover:bg-red-500/10 transition"
+            className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-semantic-error px-2.5 py-1.5 rounded-md hover:bg-sunken transition"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset
-          </motion.button>
+          </button>
         </div>
       </div>
 
-      {/* Main Filter Grid */}
+      {/* Filter Inputs Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" suppressHydrationWarning>
         {/* City Filter */}
         <div suppressHydrationWarning>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
             City
           </label>
           <select
@@ -171,19 +159,19 @@ export default function FilterBar() {
               setCity(val);
               applyFilters({ city: val });
             }}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
           >
             {CITIES.map((c) => (
-              <option key={c} value={c === 'All Cities' ? 'all' : c} className="bg-slate-900">
+              <option key={c} value={c === 'All Cities' ? 'all' : c}>
                 {c}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Property Type */}
+        {/* Category */}
         <div suppressHydrationWarning>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
             Category
           </label>
           <select
@@ -194,10 +182,10 @@ export default function FilterBar() {
               setPropertyType(val);
               applyFilters({ propertyType: val });
             }}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
           >
             {PROPERTY_TYPES.map((t) => (
-              <option key={t.value} value={t.value} className="bg-slate-900">
+              <option key={t.value} value={t.value}>
                 {t.label}
               </option>
             ))}
@@ -206,7 +194,7 @@ export default function FilterBar() {
 
         {/* Bedrooms */}
         <div suppressHydrationWarning>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
             Bedrooms (BHK)
           </label>
           <select
@@ -217,19 +205,19 @@ export default function FilterBar() {
               setBedrooms(val);
               applyFilters({ bedrooms: val });
             }}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition"
           >
-            <option value="all" className="bg-slate-900">Any BHK</option>
-            <option value="1" className="bg-slate-900">1 BHK</option>
-            <option value="2" className="bg-slate-900">2 BHK</option>
-            <option value="3" className="bg-slate-900">3 BHK</option>
-            <option value="4" className="bg-slate-900">4+ BHK</option>
+            <option value="all">Any BHK</option>
+            <option value="1">1 BHK</option>
+            <option value="2">2 BHK</option>
+            <option value="3">3 BHK</option>
+            <option value="4">4+ BHK</option>
           </select>
         </div>
 
         {/* Min Price */}
         <div suppressHydrationWarning>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
             Min Price (₹)
           </label>
           <input
@@ -239,13 +227,13 @@ export default function FilterBar() {
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             onBlur={() => applyFilters({ minPrice })}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition placeholder:text-slate-600"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary"
           />
         </div>
 
         {/* Max Price */}
         <div suppressHydrationWarning>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <label className="block text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1">
             Max Price (₹)
           </label>
           <input
@@ -255,7 +243,7 @@ export default function FilterBar() {
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             onBlur={() => applyFilters({ maxPrice })}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:ring-2 focus:ring-brand-500 focus:bg-slate-900 transition placeholder:text-slate-600"
+            className="w-full bg-sunken border border-border rounded-md px-3 py-2 text-xs font-medium text-primary focus:border-accent transition placeholder:text-tertiary"
           />
         </div>
       </div>

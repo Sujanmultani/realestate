@@ -15,21 +15,19 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="w-full md:w-64 bg-slate-900/90 border-r border-slate-800/80 p-6 flex flex-col justify-between shrink-0">
+    <aside className="w-full md:w-64 bg-surface border-r border-border p-6 flex flex-col justify-between shrink-0">
       <div className="space-y-6">
-        {/* Admin Header */}
-        <div className="flex items-center gap-3 px-2">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center font-bold">
-            <Shield className="w-5 h-5" />
+        <div className="flex items-center gap-2.5 px-2">
+          <div className="w-8 h-8 rounded-md bg-accent-subtle text-accent flex items-center justify-center font-bold">
+            <Shield className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="font-black text-white text-sm">Admin Console</h2>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Management</p>
+            <h2 className="font-display font-medium text-primary text-base">Admin Console</h2>
+            <p className="text-[11px] text-secondary font-medium uppercase tracking-wider">Management</p>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="space-y-1.5">
+        <nav className="space-y-1">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -38,16 +36,16 @@ export default function AdminSidebar() {
                 {isActive && (
                   <motion.div
                     layoutId="adminNavTab"
-                    className="absolute inset-0 bg-brand-600/20 border-l-4 border-brand-500 rounded-r-xl"
+                    className="absolute inset-0 bg-accent-subtle border-l-2 border-accent rounded-r-md"
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                   />
                 )}
                 <div
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition relative z-10 ${
-                    isActive ? 'text-brand-300 font-black' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold transition relative z-10 ${
+                    isActive ? 'text-accent font-bold' : 'text-secondary hover:text-primary hover:bg-sunken'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-brand-400' : 'text-slate-500'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-secondary'}`} />
                   <span>{link.label}</span>
                 </div>
               </Link>
@@ -56,13 +54,12 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Back to Site Button */}
-      <div className="pt-6 border-t border-slate-800">
+      <div className="pt-6 border-t border-border">
         <Link
           href="/"
-          className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white px-3 py-2 rounded-xl hover:bg-slate-800 transition"
+          className="flex items-center gap-2 text-xs font-medium text-secondary hover:text-primary px-3 py-2 rounded-md hover:bg-sunken transition"
         >
-          <ArrowLeft className="w-4 h-4 text-brand-400" />
+          <ArrowLeft className="w-4 h-4 text-accent" />
           <span>Exit to Public Portal</span>
         </Link>
       </div>

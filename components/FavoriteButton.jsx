@@ -18,7 +18,6 @@ export default function FavoriteButton({ propertyId, initialIsFavorited = false,
 
     if (loading) return;
 
-    // Optimistic UI update
     const previousState = isFavorited;
     setIsFavorited(!previousState);
     setLoading(true);
@@ -46,21 +45,21 @@ export default function FavoriteButton({ propertyId, initialIsFavorited = false,
     <motion.button
       type="button"
       suppressHydrationWarning
-      whileHover={{ scale: 1.12 }}
-      whileTap={{ scale: 0.85 }}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.92 }}
       onClick={handleToggle}
       disabled={loading}
-      className={`p-2.5 rounded-full glass-panel text-slate-300 hover:text-red-400 shadow-glass transition-colors ${className}`}
-      title={isFavorited ? 'Remove from favorites' : 'Save to favorites'}
-      aria-label="Toggle Favorite"
+      className={`p-2.5 rounded-full bg-surface border border-border text-secondary hover:text-accent shadow-sm transition ${className}`}
+      title={isFavorited ? 'Remove from shortlist' : 'Save to shortlist'}
+      aria-label="Toggle Shortlist"
     >
       <motion.div
-        animate={isFavorited ? { scale: [1, 1.35, 1] } : { scale: 1 }}
-        transition={{ duration: 0.3 }}
+        animate={isFavorited ? { scale: [1, 1.25, 1] } : { scale: 1 }}
+        transition={{ duration: 0.25 }}
       >
         <Heart
           className={`w-4 h-4 transition-colors ${
-            isFavorited ? 'fill-red-500 text-red-500' : 'text-slate-300 hover:text-red-400'
+            isFavorited ? 'fill-accent text-accent' : 'text-secondary hover:text-accent'
           }`}
         />
       </motion.div>
