@@ -48,8 +48,8 @@ export default async function PropertyDetailPage({ params }) {
       {similarProperties.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <div className="mb-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-600">Recommendations</span>
-            <h2 className="text-2xl font-extrabold text-slate-900 mt-1">Similar Properties You May Like</h2>
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent">Recommendations</span>
+            <h2 className="font-display font-normal text-3xl text-primary tracking-tight mt-1">Similar Properties</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

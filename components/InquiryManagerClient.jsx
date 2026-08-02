@@ -40,17 +40,17 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <span className="text-xs font-black uppercase tracking-widest text-brand-400">Customer Leads</span>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Customer Leads</span>
+          <h1 className="font-display font-normal text-3xl text-primary tracking-tight mt-1">
             Inquiries Management
           </h1>
-          <p className="text-xs text-slate-400 mt-1 font-medium">Review and respond to direct buyer & tenant messages.</p>
+          <p className="text-xs text-secondary mt-1 font-medium">Review and respond to direct buyer & tenant messages.</p>
         </div>
 
         {/* Status Filter Pills */}
-        <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1.5 rounded-2xl">
+        <div className="flex items-center gap-1 bg-sunken border border-border p-1.5 rounded-lg">
           {['all', 'pending', 'contacted', 'closed'].map((st) => {
             const isActive = filterStatus === st;
             return (
@@ -58,14 +58,14 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
                 key={st}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilterStatus(st)}
-                className={`relative px-3.5 py-1.5 text-xs font-extrabold rounded-xl capitalize transition ${
-                  isActive ? 'text-white' : 'text-slate-400 hover:text-white'
+                className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-md capitalize transition ${
+                  isActive ? 'text-white' : 'text-secondary hover:text-primary'
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeInquiryPill"
-                    className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow"
+                    className="absolute inset-0 bg-accent rounded-md shadow-sm"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -84,17 +84,17 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
               key={inq._id}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-modal space-y-4 hover:border-slate-700 transition"
+              className="bg-surface p-6 rounded-lg border border-border shadow-sm space-y-4 hover:border-border-strong transition"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-brand-600/20 border border-brand-500/30 text-brand-300 flex items-center justify-center font-black">
+                  <div className="w-10 h-10 rounded-md bg-accent-subtle border border-accent/20 text-accent flex items-center justify-center font-bold">
                     {inq.name?.charAt(0) || 'U'}
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-white text-base">{inq.name}</h3>
-                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                    <h3 className="font-semibold text-primary text-base">{inq.name}</h3>
+                    <p className="text-xs text-secondary flex items-center gap-1 mt-0.5 font-medium">
+                      <Calendar className="w-3.5 h-3.5 text-tertiary" />
                       {new Date(inq.createdAt).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'short',
@@ -108,12 +108,12 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-3 py-1 text-xs font-black uppercase rounded-xl border ${
+                    className={`px-3 py-1 text-xs font-semibold uppercase rounded-md border ${
                       inq.status === 'pending'
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                        ? 'bg-semantic-warning/10 text-semantic-warning border-semantic-warning/30'
                         : inq.status === 'contacted'
-                        ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                        : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-accent-subtle text-accent border-accent/30'
+                        : 'bg-sunken text-secondary border-border'
                     }`}
                   >
                     {inq.status}
@@ -125,7 +125,7 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
                       whileTap={{ scale: 0.92 }}
                       disabled={updatingId === inq._id}
                       onClick={() => handleStatusUpdate(inq._id, 'contacted')}
-                      className="px-3 py-1.5 bg-blue-600/90 hover:bg-blue-600 text-white rounded-xl text-xs font-bold transition"
+                      className="px-3 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-xs font-semibold shadow-sm transition"
                     >
                       Mark Contacted
                     </motion.button>
@@ -136,7 +136,7 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
                       whileTap={{ scale: 0.92 }}
                       disabled={updatingId === inq._id}
                       onClick={() => handleStatusUpdate(inq._id, 'closed')}
-                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition"
+                      className="px-3 py-1.5 bg-sunken hover:bg-border text-secondary hover:text-primary rounded-md text-xs font-semibold transition"
                     >
                       Close Inquiry
                     </motion.button>
@@ -146,34 +146,34 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
 
               {/* Inquiry Property Reference */}
               {inq.property && (
-                <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold text-white truncate max-w-lg">
-                    <Building2 className="w-4 h-4 text-brand-400 shrink-0" />
+                <div className="p-3.5 rounded-md bg-sunken border border-border flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 font-semibold text-primary truncate max-w-lg">
+                    <Building2 className="w-4 h-4 text-accent shrink-0" />
                     <span className="truncate">{inq.property.title}</span>
                   </div>
-                  <span className="font-extrabold text-brand-300">
+                  <span className="font-semibold text-accent">
                     {formatPrice(inq.property.price, inq.property.listingType)}
                   </span>
                 </div>
               )}
 
               {/* Customer Message */}
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-slate-400 font-bold">
-                  <MessageSquare className="w-4 h-4 text-slate-500" />
+              <div className="p-4 rounded-md bg-sunken/60 border border-border space-y-2 text-xs">
+                <div className="flex items-center gap-2 text-secondary font-semibold">
+                  <MessageSquare className="w-4 h-4 text-tertiary" />
                   <span>Customer Message</span>
                 </div>
-                <p className="text-slate-200 leading-relaxed font-medium">{inq.message}</p>
+                <p className="text-primary leading-relaxed font-medium">{inq.message}</p>
               </div>
 
               {/* Contact Details */}
-              <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-300 pt-1">
-                <a href={`tel:${inq.phone}`} className="flex items-center gap-1.5 hover:text-brand-400 transition">
-                  <Phone className="w-3.5 h-3.5 text-brand-400" />
+              <div className="flex flex-wrap gap-4 text-xs font-semibold text-secondary pt-1">
+                <a href={`tel:${inq.phone}`} className="flex items-center gap-1.5 hover:text-accent transition">
+                  <Phone className="w-3.5 h-3.5 text-accent" />
                   <span>{inq.phone}</span>
                 </a>
-                <a href={`mailto:${inq.email}`} className="flex items-center gap-1.5 hover:text-brand-400 transition">
-                  <Mail className="w-3.5 h-3.5 text-brand-400" />
+                <a href={`mailto:${inq.email}`} className="flex items-center gap-1.5 hover:text-accent transition">
+                  <Mail className="w-3.5 h-3.5 text-accent" />
                   <span>{inq.email}</span>
                 </a>
               </div>
@@ -181,10 +181,10 @@ export default function InquiryManagerClient({ initialInquiries = [] }) {
           ))}
         </div>
       ) : (
-        <div className="glass-panel rounded-3xl p-12 text-center border border-slate-800 max-w-md mx-auto space-y-3">
-          <MessageSquare className="w-10 h-10 text-slate-600 mx-auto" />
-          <h3 className="text-lg font-bold text-white">No inquiries found</h3>
-          <p className="text-xs text-slate-400">There are no customer inquiries matching the selected filter status.</p>
+        <div className="bg-surface rounded-lg p-12 text-center border border-border max-w-md mx-auto space-y-3 shadow-sm">
+          <MessageSquare className="w-10 h-10 text-tertiary mx-auto" />
+          <h3 className="font-display font-medium text-lg text-primary">No inquiries found</h3>
+          <p className="text-xs text-secondary">There are no customer inquiries matching the selected filter status.</p>
         </div>
       )}
     </div>

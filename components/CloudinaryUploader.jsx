@@ -87,10 +87,10 @@ export default function CloudinaryUploader({ images = [], onChange }) {
 
   return (
     <div className="space-y-3">
-      <label className="block text-xs font-semibold text-slate-700">Property Images</label>
+      <label className="block text-xs font-semibold text-primary">Property Images</label>
 
       {/* Upload Box */}
-      <div className="border-2 border-dashed border-slate-200 hover:border-brand-500 rounded-2xl p-4 text-center bg-slate-50 transition cursor-pointer relative">
+      <div className="border-2 border-dashed border-border hover:border-accent rounded-lg p-4 text-center bg-sunken transition cursor-pointer relative">
         <input
           type="file"
           multiple
@@ -102,18 +102,18 @@ export default function CloudinaryUploader({ images = [], onChange }) {
 
         <div className="flex flex-col items-center justify-center space-y-2 py-2">
           {uploading ? (
-            <Loader2 className="w-8 h-8 text-brand-600 animate-spin" />
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-accent-subtle text-accent flex items-center justify-center">
               <Upload className="w-5 h-5" />
             </div>
           )}
 
           <div>
-            <p className="text-xs font-bold text-slate-800">
+            <p className="text-xs font-semibold text-primary">
               {uploading ? 'Uploading images...' : 'Click or drag images to upload'}
             </p>
-            <p className="text-[11px] text-slate-400">PNG, JPG, WEBP up to 10MB</p>
+            <p className="text-[11px] text-tertiary">PNG, JPG, WEBP up to 10MB</p>
           </div>
         </div>
       </div>
@@ -122,12 +122,12 @@ export default function CloudinaryUploader({ images = [], onChange }) {
       {images.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-2">
           {images.map((img, idx) => (
-            <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+            <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden bg-sunken border border-border">
               <img src={img.url} alt={`Property upload ${idx}`} className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => handleRemove(idx)}
-                className="absolute top-1 right-1 p-1 rounded-full bg-red-600 text-white opacity-90 hover:opacity-100 transition shadow-sm"
+                className="absolute top-1 right-1 p-1 rounded-full bg-semantic-error text-white opacity-90 hover:opacity-100 transition shadow-sm"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

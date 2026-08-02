@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
                 <span
                   className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
                     inq.status === 'pending'
-                      ? 'bg-amber-50 text-semantic-warning border border-amber-200'
+                      ? 'bg-semantic-warning/10 text-semantic-warning border border-semantic-warning/20'
                       : 'bg-accent-subtle text-accent border border-accent/20'
                   }`}
                 >

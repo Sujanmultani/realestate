@@ -172,15 +172,16 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">Manage Properties</h1>
-          <p className="text-xs text-slate-400">Add, edit, feature, or remove property listings in MongoDB.</p>
+          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Property Catalog</span>
+          <h1 className="font-display font-normal text-3xl text-primary tracking-tight mt-1">Manage Properties</h1>
+          <p className="text-xs text-secondary mt-1 font-medium">Add, edit, feature, or remove property listings in MongoDB.</p>
         </div>
 
         <button
           onClick={handleOpenAdd}
-          className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-md transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-hover text-white font-semibold rounded-md text-sm transition shadow-sm"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Property</span>
@@ -189,21 +190,21 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
 
       {/* Search Input */}
       <div className="relative max-w-md">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+        <Search className="w-4 h-4 text-tertiary absolute left-3.5 top-3" />
         <input
           type="text"
           placeholder="Search by title, city, or locality..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full bg-sunken border border-border rounded-lg pl-10 pr-4 py-2 text-xs text-primary placeholder:text-tertiary focus:outline-none focus:border-accent transition"
         />
       </div>
 
       {/* Properties Table */}
-      <div className="bg-slate-800/80 border border-slate-700/60 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-surface border border-border rounded-lg overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold border-b border-slate-700/60">
+            <thead className="bg-sunken text-secondary uppercase font-semibold border-b border-border text-[11px] tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Property</th>
                 <th className="py-3.5 px-4">Type</th>
@@ -214,62 +215,62 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700/40 text-slate-300">
+            <tbody className="divide-y divide-border text-primary">
               {filteredProperties.map((prop) => (
-                <tr key={prop._id} className="hover:bg-slate-700/30 transition">
+                <tr key={prop._id} className="hover:bg-sunken/50 transition">
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
                       <img
                         src={prop.images[0]?.url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=150&q=80'}
                         alt=""
-                        className="w-12 h-10 object-cover rounded-lg bg-slate-900 shrink-0"
+                        className="w-12 h-10 object-cover rounded-md bg-sunken shrink-0"
                       />
                       <div className="max-w-[200px]">
-                        <p className="font-bold text-white truncate">{prop.title}</p>
+                        <p className="font-semibold text-primary truncate">{prop.title}</p>
                         {prop.featured && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-amber-400">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-accent bg-accent-subtle px-1.5 py-0.5 rounded">
                             <Sparkles className="w-2.5 h-2.5" /> Featured
                           </span>
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 capitalize font-semibold">{prop.propertyType} ({prop.listingType})</td>
-                  <td className="py-3.5 px-4 font-bold text-amber-400">{formatPrice(prop.price, prop.listingType)}</td>
-                  <td className="py-3.5 px-4 text-slate-400">{prop.address?.locality}, {prop.address?.city}</td>
+                  <td className="py-3.5 px-4 capitalize font-medium text-secondary">{prop.propertyType} ({prop.listingType})</td>
+                  <td className="py-3.5 px-4 font-semibold text-primary">{formatPrice(prop.price, prop.listingType)}</td>
+                  <td className="py-3.5 px-4 text-secondary">{prop.address?.locality}, {prop.address?.city}</td>
                   <td className="py-3.5 px-4">
                     <span
-                      className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded ${
+                      className={`px-2 py-0.5 text-[10px] font-semibold uppercase rounded border ${
                         prop.status === 'available'
-                          ? 'bg-emerald-500/20 text-emerald-400'
-                          : 'bg-red-500/20 text-red-400'
+                          ? 'bg-accent-subtle text-accent border-accent/20'
+                          : 'bg-sunken text-secondary border-border'
                       }`}
                     >
                       {prop.status}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-400">{prop.views || 0}</td>
+                  <td className="py-3.5 px-4 text-secondary">{prop.views || 0}</td>
                   <td className="py-3.5 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <a
                         href={`/property/${prop._id}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition"
+                        className="p-1.5 rounded-md bg-sunken hover:bg-border text-secondary hover:text-primary transition"
                         title="View Public Page"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                       <button
                         onClick={() => handleOpenEdit(prop)}
-                        className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 transition"
+                        className="p-1.5 rounded-md bg-accent-subtle hover:bg-accent/20 text-accent transition"
                         title="Edit Property"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => setDeletingId(prop._id)}
-                        className="p-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition"
+                        className="p-1.5 rounded-md bg-semantic-error/10 hover:bg-semantic-error/20 text-semantic-error transition"
                         title="Delete Property"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -285,55 +286,55 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
 
       {/* Add / Edit Modal */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 text-slate-100 rounded-3xl max-w-2xl w-full p-6 space-y-6 my-8 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-surface border border-border text-primary rounded-xl max-w-2xl w-full p-6 space-y-6 my-8 shadow-xl relative">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <h2 className="font-display font-medium text-xl text-primary">
                 {editingProperty ? 'Edit Property' : 'Add New Property'}
               </h2>
-              <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsFormOpen(false)} className="text-secondary hover:text-primary transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-xs">
+              <div className="p-3 bg-semantic-error/10 border border-semantic-error/30 text-semantic-error rounded-lg text-xs font-semibold">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold mb-1">Property Title</label>
+                <label className="block text-xs font-semibold text-primary mb-1">Property Title</label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="e.g. Luxury 3BHK Apartment in Bandra"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                  className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary placeholder:text-tertiary focus:outline-none focus:border-accent transition"
                 />
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Price (₹)</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Price (₹)</label>
                   <input
                     type="number"
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="25000000"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary placeholder:text-tertiary focus:outline-none focus:border-accent transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Listing Purpose</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Listing Purpose</label>
                   <select
                     value={formData.listingType}
                     onChange={(e) => setFormData({ ...formData, listingType: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   >
                     <option value="sale">For Sale</option>
                     <option value="rent">For Rent</option>
@@ -341,11 +342,11 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Property Category</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Property Category</label>
                   <select
                     value={formData.propertyType}
                     onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   >
                     <option value="apartment">Apartment</option>
                     <option value="villa">Villa</option>
@@ -358,57 +359,57 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Bedrooms</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Bedrooms</label>
                   <input
                     type="number"
                     value={formData.bedrooms}
                     onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Bathrooms</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Bathrooms</label>
                   <input
                     type="number"
                     value={formData.bathrooms}
                     onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Area (sqft)</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Area (sqft)</label>
                   <input
                     type="number"
                     required
                     value={formData.areaSqft}
                     onChange={(e) => setFormData({ ...formData, areaSqft: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold mb-1">City</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">City</label>
                   <input
                     type="text"
                     required
                     value={formData.address.city}
                     onChange={(e) => setFormData({ ...formData, address: { ...formData.address, city: e.target.value } })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold mb-1">Locality</label>
+                  <label className="block text-xs font-semibold text-primary mb-1">Locality</label>
                   <input
                     type="text"
                     required
                     value={formData.address.locality}
                     onChange={(e) => setFormData({ ...formData, address: { ...formData.address, locality: e.target.value } })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                    className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                   />
                 </div>
               </div>
@@ -420,43 +421,43 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
               />
 
               <div>
-                <label className="block text-xs font-semibold mb-1">Description</label>
+                <label className="block text-xs font-semibold text-primary mb-1">Description</label>
                 <textarea
                   rows={3}
                   required
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                  className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1">Amenities (Comma separated)</label>
+                <label className="block text-xs font-semibold text-primary mb-1">Amenities (Comma separated)</label>
                 <input
                   type="text"
                   value={formData.amenities}
                   onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"
+                  className="w-full bg-sunken border border-border rounded-lg px-3 py-2 text-xs text-primary focus:outline-none focus:border-accent transition"
                 />
               </div>
 
               <div className="flex items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-primary">
                   <input
                     type="checkbox"
                     checked={formData.featured}
                     onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    className="rounded text-amber-500 focus:ring-amber-500"
+                    className="rounded text-accent focus:ring-accent accent-accent"
                   />
                   <span>Mark as Featured</span>
                 </label>
 
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-2 text-xs text-primary">
                   <label className="font-semibold">Status:</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white"
+                    className="bg-sunken border border-border rounded-lg px-2 py-1 text-primary focus:outline-none focus:border-accent transition"
                   >
                     <option value="available">Available</option>
                     <option value="sold">Sold</option>
@@ -465,18 +466,18 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-sunken hover:bg-border text-secondary hover:text-primary transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md transition"
+                  className="px-5 py-2 rounded-lg text-xs font-semibold bg-accent hover:bg-accent-hover text-white shadow-sm transition"
                 >
                   {loading ? 'Saving...' : editingProperty ? 'Update Property' : 'Publish Property'}
                 </button>
@@ -488,23 +489,23 @@ export default function PropertyManagerClient({ initialProperties = [], initialS
 
       {/* Delete Confirmation Modal */}
       {deletingId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 text-center space-y-4">
-            <h3 className="text-lg font-bold text-white">Delete Property?</h3>
-            <p className="text-xs text-slate-400">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm">
+          <div className="bg-surface border border-border rounded-xl max-w-sm w-full p-6 text-center space-y-4 shadow-xl">
+            <h3 className="font-display font-medium text-lg text-primary">Delete Property?</h3>
+            <p className="text-xs text-secondary">
               This action cannot be undone. All associated inquiries for this property will also be removed.
             </p>
             <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={() => setDeletingId(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300"
+                className="px-4 py-2 rounded-lg text-xs font-semibold bg-sunken hover:bg-border text-secondary hover:text-primary transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white"
+                className="px-4 py-2 rounded-lg text-xs font-semibold bg-semantic-error hover:bg-semantic-error/90 text-white transition"
               >
                 {loading ? 'Deleting...' : 'Confirm Delete'}
               </button>
