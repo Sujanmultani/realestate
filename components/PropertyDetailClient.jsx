@@ -18,7 +18,7 @@ import {
   Share2,
 } from 'lucide-react';
 
-export default function PropertyDetailClient({ property, isFavorited = false, similarProperties = [] }) {
+export default function PropertyDetailClient({ property, isFavorited = false, similarProperties = [], favoritedIds }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -237,7 +237,11 @@ export default function PropertyDetailClient({ property, isFavorited = false, si
           <h2 className="font-display font-medium text-2xl text-primary">Similar Verified Residences</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {similarProperties.map((prop) => (
-              <PropertyCard key={prop._id} property={prop} isFavorited={isFavorited} />
+              <PropertyCard
+                key={prop._id}
+                property={prop}
+                isFavorited={favoritedIds?.has(prop._id.toString()) ?? false}
+              />
             ))}
           </div>
         </div>

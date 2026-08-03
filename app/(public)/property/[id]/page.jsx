@@ -3,7 +3,6 @@ import { getPropertyById, getSimilarProperties, getUserFavorites } from '@/lib/d
 import { incrementPropertyViews } from '@/lib/actions';
 import { auth } from '@/lib/auth';
 import PropertyDetailClient from '@/components/PropertyDetailClient';
-import PropertyCard from '@/components/PropertyCard';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -42,27 +41,13 @@ export default async function PropertyDetailPage({ params }) {
 
   return (
     <div className="space-y-12">
-      <PropertyDetailClient property={property} isFavorited={isFavorited} />
-
-      {/* Similar Properties Section */}
-      {similarProperties.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="mb-6">
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent">Recommendations</span>
-            <h2 className="font-display font-normal text-3xl text-primary tracking-tight mt-1">Similar Properties</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {similarProperties.map((similar) => (
-              <PropertyCard
-                key={similar._id}
-                property={similar}
-                isFavorited={favoritedIds.has(similar._id.toString())}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      <PropertyDetailClient
+        property={property}
+        isFavorited={isFavorited}
+        similarProperties={similarProperties}
+        favoritedIds={favoritedIds}
+      />
     </div>
   );
 }
+
