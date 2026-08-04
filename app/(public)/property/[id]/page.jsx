@@ -32,7 +32,7 @@ export default async function PropertyDetailPage({ params }) {
 
   const [session, similarProperties] = await Promise.all([
     auth(),
-    getSimilarProperties(property._id, property.address.city, property.propertyType, 3),
+    getSimilarProperties(property, 3),
   ]);
 
   const userFavorites = session?.user?.id ? await getUserFavorites(session.user.id) : [];
